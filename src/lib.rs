@@ -1,8 +1,8 @@
 pub mod configuration;
 pub mod read_temp;
 pub mod routes;
+pub mod send_temp;
 pub mod shared_data;
-//pub mod send_temp;
 
 use crate::routes::health_check::health_check;
 use crate::routes::temperature::get_temperature;
@@ -16,17 +16,13 @@ use actix_web::HttpServer;
 use std::net::TcpListener;
 use std::sync::Arc;
 
-
-
 #[derive(serde::Deserialize, serde::Serialize)]
 struct ThermostatData {
     thermostat_setting: usize,
 }
 
 pub fn run(listener: TcpListener, sd: &AccessSharedData) -> Result<Server, std::io::Error> {
-    //let common_data = Arc::clone(common_data);
     let common_data = web::Data::new(Arc::clone(&sd.sd));
-    //let thermostat_value = Data::new(thermostat_value.clone());
 
     let server = HttpServer::new(move || {
         App::new()

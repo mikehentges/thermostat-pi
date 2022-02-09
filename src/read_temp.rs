@@ -2,7 +2,6 @@ use crate::shared_data::AccessSharedData;
 use glob::glob;
 use log::{debug, error, info};
 use std::error::Error;
-use std::thread;
 use std::time::Duration;
 use std::{
     fs::File,
@@ -10,13 +9,13 @@ use std::{
     path::Path,
 };
 
-//use crate::send_temp::store_temp_data;
+use crate::send_temp::store_temp_data;
 
 const BASE_DIR: &str = "/sys/bus/w1/devices/";
 
 pub async fn read_the_temperature(
     sd: &AccessSharedData,
-    _aws_url: String,
+    aws_url: String,
 ) -> Result<(), Box<dyn Error>> {
     debug!("starting to read the temp");
     let mut device_file: String = "".to_string();
@@ -28,10 +27,9 @@ pub async fn read_the_temperature(
     }
     debug!("device file is: {}", device_file);
 
-    //let aws_url = &aws_url.clone();
-
     loop {
         read_temp(&device_file, &sd).await?;
+        store_temp_data(&sd, &aws_url).await?;
 
         debug!("Trying to get a lock");
         if !(sd.get_continue_read_temp()) {
@@ -40,7 +38,9 @@ pub async fn read_the_temperature(
         }
 
         debug!("going to sleep");
-        thread::sleep(Duration::from_millis(500));
+        //thread::sleep(Duration::from_millis(500));
+        //thread::sleep(Duration::from_secs(15));
+        tokio::time::sleep(Duration::from_secs(15)).await;
     }
     Ok(())
 }
@@ -49,7 +49,7 @@ async fn read_temp(device_file: &str, sd: &AccessSharedData) -> Result<(), std::
     let mut data = lines_from_file(device_file).await;
     debug!("Data read: {:?}", data);
     while &(data[0][data[0].len() - 3..]) != "YES" {
-        thread::sleep(Duration::from_millis(500));
+        tokio::time::sleep(Duration::from_millis(500)).await;
         data = lines_from_file(device_file).await;
     }
     let equals_pos = data[1].find("t=").unwrap();
@@ -60,7 +60,6 @@ async fn read_temp(device_file: &str, sd: &AccessSharedData) -> Result<(), std::
     debug!("trying to set global current temp");
     sd.set_current_temp(temp_f);
 
-    //*current_temp.lock().unwrap() = temp_f;
     println!("temp is: {}", temp_f);
 
     Ok(())

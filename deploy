@@ -14,4 +14,4 @@ cross build --release --target=${TARGET_ARCH} --features vendored-openssl
 
 rsync ./configuration.yaml ${TARGET_HOST}:/home/pi/configuration.yaml
 rsync ${SOURCE_PATH} ${TARGET_HOST}:${TARGET_PATH}
-ssh -t ${TARGET_HOST} ${TARGET_PATH}
+#ssh -t ${TARGET_HOST} ${TARGET_PATH}
