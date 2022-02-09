@@ -1,8 +1,8 @@
-use crate::shared_data::SharedData;
+use crate::AccessSharedData;
 use actix_web::http::header::ContentType;
 use actix_web::web;
 use actix_web::HttpResponse;
-use std::sync::{Arc, Mutex};
+
 
 #[derive(serde::Deserialize, serde::Serialize)]
 pub struct ThermostatData {
@@ -11,16 +11,16 @@ pub struct ThermostatData {
 
 pub async fn set_thermostat(
     form: web::Form<ThermostatData>,
-    shared_data: web::Data<Arc<Mutex<SharedData>>>,
+    shared_data: web::Data<AccessSharedData>,
 ) -> HttpResponse {
-    let mut shared_data = shared_data.lock().unwrap();
-    shared_data.thermostat_value = form.thermostat_setting;
+    shared_data.set_thermostat_value(form.thermostat_setting);
     println!("New thermostat value: {}", form.thermostat_setting);
     HttpResponse::Ok().finish()
 }
 
-pub async fn get_thermostat(shared_data: web::Data<Arc<Mutex<SharedData>>>) -> HttpResponse {
-    let thermostat = shared_data.lock().unwrap().thermostat_value;
+pub async fn get_thermostat(shared_data: web::Data<AccessSharedData>) -> HttpResponse {
+
+    let thermostat = shared_data.get_thermostat_value();
     let thermostat = ThermostatData {
         thermostat_setting: thermostat,
     };

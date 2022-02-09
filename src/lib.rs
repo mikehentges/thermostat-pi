@@ -14,7 +14,7 @@ use actix_web::web;
 use actix_web::App;
 use actix_web::HttpServer;
 use std::net::TcpListener;
-use std::sync::Arc;
+
 
 #[derive(serde::Deserialize, serde::Serialize)]
 struct ThermostatData {
@@ -22,7 +22,8 @@ struct ThermostatData {
 }
 
 pub fn run(listener: TcpListener, sd: &AccessSharedData) -> Result<Server, std::io::Error> {
-    let common_data = web::Data::new(Arc::clone(&sd.sd));
+    //let common_data = web::Data::new(Arc::clone(&sd.sd));
+    let common_data= web::Data::new(sd.clone());
 
     let server = HttpServer::new(move || {
         App::new()

@@ -1,16 +1,15 @@
-use crate::shared_data::SharedData;
 use actix_web::http::header::ContentType;
 use actix_web::web;
 use actix_web::HttpResponse;
-use std::sync::{Arc, Mutex};
+use crate::AccessSharedData;
 
 #[derive(serde::Deserialize, serde::Serialize)]
 struct TemperatureData {
     temperature_value: f32,
 }
 
-pub async fn get_temperature(common_data: web::Data<Arc<Mutex<SharedData>>>) -> HttpResponse {
-    let temperature = common_data.lock().unwrap().current_temp;
+pub async fn get_temperature(common_data: web::Data<AccessSharedData>) -> HttpResponse {
+    let temperature = common_data.get_current_temp();
     let temperature = TemperatureData {
         temperature_value: temperature,
     };
