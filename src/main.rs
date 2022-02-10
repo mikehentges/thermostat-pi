@@ -16,7 +16,7 @@ async fn main() -> std::io::Result<()> {
     let configuration = get_configuration().expect("Failed to read configuration.");
     let common_data = SharedData {
         continue_read_temp: true,
-        current_temp: 0.0,
+        current_temp: configuration.initial_thermostat_value as f32 + 5.0,
         thermostat_value: configuration.initial_thermostat_value,
         thermostat_on: false,
     };

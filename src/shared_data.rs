@@ -33,7 +33,7 @@ impl AccessSharedData {
         let lock = self.sd.lock().unwrap();
         lock.current_temp
     }
-    pub fn set_current_temp(&self, new_val: f32) {
+    pub fn set_current_temp(&self, new_val: f32 ) {
         let mut lock = self.sd.lock().unwrap();
         lock.current_temp = new_val;
     }

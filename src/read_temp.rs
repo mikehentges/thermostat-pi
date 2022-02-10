@@ -4,10 +4,12 @@ use log::{debug, error, info};
 use std::error::Error;
 use std::time::Duration;
 use std::{
-    fs::File,
-    io::{prelude::*, BufReader},
+    // fs::File,
+    // io::{prelude::*, BufReader},
     path::Path,
 };
+use tokio::fs::File;
+use tokio::io::{AsyncBufReadExt, BufReader};
 
 use crate::send_temp::store_temp_data;
 
@@ -66,9 +68,12 @@ async fn read_temp(device_file: &str, sd: &AccessSharedData) -> Result<(), std::
 }
 
 async fn lines_from_file(filename: impl AsRef<Path>) -> Vec<String> {
-    let file = File::open(filename).expect("no such file");
+    let file = File::open(filename).await.expect("no such file");
     let buf = BufReader::new(file);
-    buf.lines()
-        .map(|l| l.expect("Could not parse line"))
-        .collect()
+    let mut lines = buf.lines();
+    let mut rv:Vec<String> = Vec::new();
+    while let Some(line) = lines.next_line().await.expect("Failed to read file") {
+        rv.push(line);
+    }
+    rv
 }
