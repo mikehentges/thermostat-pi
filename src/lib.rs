@@ -3,6 +3,7 @@ pub mod read_temp;
 pub mod routes;
 pub mod send_temp;
 pub mod shared_data;
+pub mod control_thermostat;
 
 use crate::routes::health_check::health_check;
 use crate::routes::temperature::get_temperature;

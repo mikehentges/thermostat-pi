@@ -1,10 +1,12 @@
 use std::sync::{Arc, Mutex};
+use time::OffsetDateTime;
 
 pub struct SharedData {
     pub continue_read_temp: bool,
     pub current_temp: f32,
     pub thermostat_value: usize,
     pub thermostat_on: bool,
+    pub thermostat_change_datetime: OffsetDateTime,
 }
 pub type Sd = Arc<Mutex<SharedData>>;
 
@@ -53,4 +55,13 @@ impl AccessSharedData {
         let mut lock = self.sd.lock().unwrap();
         lock.thermostat_on = new_val;
     }
+    pub fn get_thermostat_change_datetime(&self) -> OffsetDateTime {
+        let lock = self.sd.lock().unwrap();
+        lock.thermostat_change_datetime
+    }
+    pub fn set_thermostat_change_datetime(&self, dt: OffsetDateTime) {
+        let mut lock = self.sd.lock().unwrap();
+        lock.thermostat_change_datetime = dt;
+    }
+
 }

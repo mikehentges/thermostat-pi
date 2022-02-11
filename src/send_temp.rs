@@ -1,11 +1,13 @@
 use crate::shared_data::AccessSharedData;
-use chrono::{DateTime, Utc};
+//use chrono::{DateTime, Utc};
 use log::{debug, error, info};
 use reqwest;
 use reqwest::Error;
 use serde::Deserialize;
 use serde::Serialize;
-use std::time::SystemTime;
+use time::OffsetDateTime;
+use time::format_description::well_known::Rfc3339;
+use time::macros::offset;
 
 #[derive(Debug, Serialize, Deserialize)]
 struct TempData {
@@ -18,9 +20,8 @@ struct TempData {
 pub async fn store_temp_data(sd: &AccessSharedData, aws_url: &str) -> Result<(), Error> {
     let client = reqwest::Client::new();
 
-    let now = SystemTime::now();
-    let now: DateTime<Utc> = now.into();
-    let now = now.to_rfc3339();
+    let now = OffsetDateTime::now_utc().to_offset(offset!(-6));
+    let now = now.format(&Rfc3339).unwrap();
     debug!("now: {}", now);
 
     let body = TempData {
