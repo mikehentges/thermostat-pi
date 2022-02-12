@@ -1,20 +1,18 @@
-use log::{debug, error, info};
 use std::net::TcpListener;
 use std::sync::{Arc, Mutex};
-use time::OffsetDateTime;
 use thermostat_pi::configuration::get_configuration;
-use thermostat_pi::read_temp::read_the_temperature;
 use thermostat_pi::control_thermostat::run_control_thermostat;
+use thermostat_pi::read_temp::read_the_temperature;
 use thermostat_pi::run;
 use thermostat_pi::shared_data::{AccessSharedData, SharedData};
+use thermostat_pi::telemetry::{get_subscriber, init_subscriber};
+use time::OffsetDateTime;
 use tokio::spawn;
-
 
 #[tokio::main]
 async fn main() -> std::io::Result<()> {
-    tracing_subscriber::fmt::init();
-
-    //let rt = Runtime::new().unwrap();
+    let subscriber = get_subscriber("thermostat-pi".into(), "info".into());
+    init_subscriber(subscriber);
 
     let configuration = get_configuration().expect("Failed to read configuration.");
     let common_data = SharedData {
@@ -30,33 +28,32 @@ async fn main() -> std::io::Result<()> {
 
     let sdc = sd.clone();
     let run_handle = spawn(async move {
-        debug!("kicking off read the temp");
+        tracing::debug!("kicking off read the temp");
         match read_the_temperature(&sdc, configuration.push_lambda_url).await {
-            Ok(_) => info!("read has ended"),
-            _ => error!("read has returned an error"),
+            Ok(_) => tracing::info!("read has ended"),
+            _ => tracing::error!("read has returned an error"),
         }
     });
     let sdc = sd.clone();
     let control_handle = spawn(async move {
-        debug!("kicking off control_thermostat");
+        tracing::debug!("kicking off control_thermostat");
         match run_control_thermostat(&sdc).await {
-            Ok(_) => info!("control_thermostat has ended"),
-            _ => error!("control_thermostat has returned an error"),
+            Ok(_) => tracing::info!("control_thermostat has ended"),
+            _ => tracing::error!("control_thermostat has returned an error"),
         }
     });
-
 
     let sdc = sd.clone();
 
     // When a SIGINT (Ctrl-C) or SIGTERM signal is caught, automatically set running to false.
     let sig = tokio::spawn(async move {
-        debug!("starting sig handler");
+        tracing::debug!("starting sig handler");
         tokio::signal::ctrl_c().await.unwrap();
-        debug!("In handler for interrupt");
+        tracing::debug!("In handler for interrupt");
         {
             sdc.set_continue_read_temp(false);
         }
-        debug!("common data mutex set");
+        tracing::debug!("common data mutex set");
     });
 
     let listener = TcpListener::bind(format!("192.168.1.33:{}", configuration.application_port))
@@ -68,7 +65,7 @@ async fn main() -> std::io::Result<()> {
         _ = control_handle => 0,
         _ = server => 0
     };
-    info!(
+    tracing::info!(
         "Final temperature is: {}\nFinal thermostat value is: {}",
         sd.get_current_temp(),
         sd.get_thermostat_value()

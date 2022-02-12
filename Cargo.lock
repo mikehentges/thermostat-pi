@@ -1660,16 +1660,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "simple-signal"
-version = "1.1.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "53f7da44adcc42667d57483bd93f81295f27d66897804b757573b61b6f13288b"
-dependencies = [
- "lazy_static",
- "libc",
-]
-
-[[package]]
 name = "slab"
 version = "0.4.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1730,22 +1720,20 @@ dependencies = [
  "anyhow",
  "config 0.11.0",
  "glob",
- "log",
  "openssl",
  "reqwest",
  "rppal",
  "serde 1.0.136",
  "serde_json",
- "simple-signal",
  "thiserror",
  "time",
  "tokio",
  "tracing",
  "tracing-actix-web",
  "tracing-bunyan-formatter",
- "tracing-futures",
  "tracing-log",
  "tracing-subscriber",
+ "uuid",
  "wiremock",
 ]
 
