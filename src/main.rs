@@ -29,7 +29,13 @@ async fn main() -> std::io::Result<()> {
     let sdc = sd.clone();
     let run_handle = spawn(async move {
         tracing::debug!("kicking off read the temp");
-        match read_the_temperature(&sdc, configuration.push_lambda_url).await {
+        match read_the_temperature(
+            &sdc,
+            configuration.push_lambda_url,
+            configuration.poll_interval,
+        )
+        .await
+        {
             Ok(_) => tracing::info!("read has ended"),
             _ => tracing::error!("read has returned an error"),
         }
@@ -37,7 +43,7 @@ async fn main() -> std::io::Result<()> {
     let sdc = sd.clone();
     let control_handle = spawn(async move {
         tracing::debug!("kicking off control_thermostat");
-        match run_control_thermostat(&sdc).await {
+        match run_control_thermostat(&sdc, configuration.poll_interval).await {
             Ok(_) => tracing::info!("control_thermostat has ended"),
             _ => tracing::error!("control_thermostat has returned an error"),
         }
@@ -56,7 +62,7 @@ async fn main() -> std::io::Result<()> {
         tracing::debug!("common data mutex set");
     });
 
-    let listener = TcpListener::bind(format!("192.168.1.33:{}", configuration.application_port))
+    let listener = TcpListener::bind(format!("192.168.1.58:{}", configuration.application_port))
         .expect("Failed to create listener");
     let server = run(listener, &sd.clone())?;
     tokio::select! {

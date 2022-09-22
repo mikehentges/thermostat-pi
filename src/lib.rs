@@ -13,11 +13,11 @@ use crate::shared_data::AccessSharedData;
 
 use actix_web::dev::Server;
 //use actix_web::middleware::Logger;
-use tracing_actix_web::TracingLogger;
 use actix_web::web;
 use actix_web::App;
 use actix_web::HttpServer;
 use std::net::TcpListener;
+use tracing_actix_web::TracingLogger;
 
 #[derive(serde::Deserialize, serde::Serialize)]
 struct ThermostatData {

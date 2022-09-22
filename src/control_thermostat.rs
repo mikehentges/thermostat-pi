@@ -48,10 +48,13 @@ fn control_thermostat(sd: &AccessSharedData) -> Result<(), Box<dyn Error>> {
 }
 
 #[tracing::instrument(name = "running the loop to monitor thermostat setting", skip(sd))]
-pub async fn run_control_thermostat(sd: &AccessSharedData) -> Result<(), Box<dyn Error>> {
+pub async fn run_control_thermostat(
+    sd: &AccessSharedData,
+    poll_interval: usize,
+) -> Result<(), Box<dyn Error>> {
     loop {
         control_thermostat(sd).unwrap();
-        tokio::time::sleep(std::time::Duration::from_secs(5)).await;
+        tokio::time::sleep(std::time::Duration::from_secs(poll_interval as u64)).await;
         if !sd.get_continue_read_temp() {
             break;
         }

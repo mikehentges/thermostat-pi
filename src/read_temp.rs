@@ -17,6 +17,7 @@ const BASE_DIR: &str = "/sys/bus/w1/devices/";
 pub async fn read_the_temperature(
     sd: &AccessSharedData,
     aws_url: String,
+    poll_interval: usize,
 ) -> Result<(), Box<dyn Error>> {
     tracing::debug!("starting to read the temp");
     let mut device_file: String = "".to_string();
@@ -41,7 +42,7 @@ pub async fn read_the_temperature(
         tracing::debug!("going to sleep");
         //thread::sleep(Duration::from_millis(500));
         //thread::sleep(Duration::from_secs(15));
-        tokio::time::sleep(Duration::from_secs(15)).await;
+        tokio::time::sleep(Duration::from_secs(poll_interval as u64)).await;
     }
     Ok(())
 }
@@ -67,6 +68,7 @@ async fn read_temp(device_file: &str, sd: &AccessSharedData) -> Result<(), std::
 }
 
 async fn lines_from_file(filename: impl AsRef<Path>) -> Vec<String> {
+    tracing::debug!("reading temperature file: {:#?}", filename.as_ref());
     let file = File::open(filename).await.expect("no such file");
     let buf = BufReader::new(file);
     let mut lines = buf.lines();

@@ -7,10 +7,7 @@ use actix_web::HttpResponse;
 struct TemperatureData {
     temperature_value: f32,
 }
-#[tracing::instrument(
-    name = "getting the temperature",
-    skip(common_data)
-)]
+#[tracing::instrument(name = "getting the temperature", skip(common_data))]
 pub async fn get_temperature(common_data: web::Data<AccessSharedData>) -> HttpResponse {
     let temperature = common_data.get_current_temp();
     tracing::info!("retreiving temperature of: {}", temperature);

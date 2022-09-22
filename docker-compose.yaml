@@ -1,0 +1,11 @@
+version: "3.9"
+services:
+
+  otlp-collector:
+    image: otel/opentelemetry-collector:latest
+    command: [ "--config=/etc/otlp-collector-config.yaml", "--log-level=debug" ]
+    volumes:
+      - ./otlp-collector-config.yaml:/etc/otlp-collector-config.yaml
+    ports:
+      - "4317:4317"
+      - "9001:9001"

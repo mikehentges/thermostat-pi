@@ -1,0 +1,30 @@
+processors:
+  batch:
+
+exporters:
+  otlp:
+    endpoint: "api.honeycomb.io:443"
+    headers:
+      [
+        "x-honeycomb-team": "453406d2a77ff2100066771a9cb2aa61",
+        "x-honeycomb-dataset": "thermostat-pi",
+      ]
+    insecure: false
+
+  logging:
+
+service:
+  extensions: []
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: []
+      exporters: [otlp]
+
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: "0.0.0.0:4317"
+      http:
+        endpoint: "0.0.0.0:9001"
