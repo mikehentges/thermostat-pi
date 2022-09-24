@@ -4,7 +4,7 @@ use rppal::gpio::Gpio;
 
 // Gpio uses BCM pin numbering. BCM GPIO 23 is tied to physical pin 16.
 const GPIO_PIN: u8 = 17;
-
+#[tracing::instrument(name = "changing relay status")]
 pub fn change_relay(relay_status: bool) -> Result<(), Box<dyn Error>> {
     tracing::debug!("starting relay change");
 

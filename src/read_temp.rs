@@ -47,6 +47,7 @@ pub async fn read_the_temperature(
     Ok(())
 }
 
+#[tracing::instrument(name = "reading the temp", skip(sd))]
 async fn read_temp(device_file: &str, sd: &AccessSharedData) -> Result<(), std::io::Error> {
     let mut data = lines_from_file(device_file).await;
     tracing::debug!("Data read: {:?}", data);
@@ -66,7 +67,7 @@ async fn read_temp(device_file: &str, sd: &AccessSharedData) -> Result<(), std::
 
     Ok(())
 }
-
+#[tracing::instrument(name = "reading the lines from the file", skip(filename))]
 async fn lines_from_file(filename: impl AsRef<Path>) -> Vec<String> {
     tracing::debug!("reading temperature file: {:#?}", filename.as_ref());
     let file = File::open(filename).await.expect("no such file");
