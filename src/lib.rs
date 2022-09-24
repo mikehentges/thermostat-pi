@@ -1,5 +1,6 @@
 pub mod configuration;
 pub mod control_thermostat;
+pub mod pi_relay;
 pub mod read_temp;
 pub mod routes;
 pub mod send_temp;

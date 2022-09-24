@@ -30,8 +30,8 @@ pub async fn read_the_temperature(
     tracing::debug!("device file is: {}", device_file);
 
     loop {
-        read_temp(&device_file, &sd).await?;
-        store_temp_data(&sd, &aws_url).await?;
+        read_temp(&device_file, sd).await?;
+        store_temp_data(sd, &aws_url).await?;
 
         tracing::debug!("Trying to get a lock");
         if !(sd.get_continue_read_temp()) {

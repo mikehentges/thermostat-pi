@@ -41,6 +41,7 @@ tracing-actix-web = "0.6.1"
 #tracing-honeycomb = "0.4.3"
 url = "2.2.2"
 #tonic = "0.6.2"
+simple-signal = "1.1.1"
 
 
 [dev-dependencies]

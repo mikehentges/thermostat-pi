@@ -1,3 +1,4 @@
+use crate::pi_relay::change_relay;
 use crate::shared_data::AccessSharedData;
 use std::error::Error;
 use time::OffsetDateTime;
@@ -22,6 +23,7 @@ fn control_thermostat(sd: &AccessSharedData) -> Result<(), Box<dyn Error>> {
                 sd.is_thermostat_on()
             );
             // need to turn the thermostat to false
+            change_relay(false)?;
             sd.set_thermostat_on(false);
             sd.set_thermostat_change_datetime(now);
         } else if temp_now < thermostat_now as f32 && !sd.is_thermostat_on() {
@@ -32,6 +34,7 @@ fn control_thermostat(sd: &AccessSharedData) -> Result<(), Box<dyn Error>> {
                 sd.is_thermostat_on()
             );
             // need to turn the thermostat to true
+            change_relay(true)?;
             sd.set_thermostat_on(true);
             sd.set_thermostat_change_datetime(now);
         } else {
