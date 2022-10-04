@@ -43,3 +43,7 @@ The subsystems of the application are as follows:
 - **End-User UI** – We need a way to control the thermostat and see its current state. This UI interacts with the application via HTTP to get/set data. It also can retrieve historical data from the cloud for display.
 
 I’m still fiddling with things and working on a GUI client. But for now, it works!
+
+## License
+
+Licensed under either of Apache License, Version 2.0 or MIT license at your option. Unless you explicitly state otherwise, any contribution intentionally submitted for inclusion in this application by you, as defined in the Apache-2.0 license, shall be dual licensed as above, without any additional terms or conditions.
