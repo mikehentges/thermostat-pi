@@ -8,7 +8,7 @@ pub struct ThermostatData {
     thermostat_setting: usize,
 }
 #[tracing::instrument(
-    name = "getting the thermostat",
+    name = "setting the thermostat",
     skip(form, shared_data),
     fields(
         new_therm_data = %form.thermostat_setting
@@ -22,7 +22,7 @@ pub async fn set_thermostat(
     tracing::info!("New thermostat value: {}", form.thermostat_setting);
     HttpResponse::Ok().finish()
 }
-#[tracing::instrument(name = "setting the thermostat", skip(shared_data))]
+#[tracing::instrument(name = "getting the thermostat", skip(shared_data))]
 pub async fn get_thermostat(shared_data: web::Data<AccessSharedData>) -> HttpResponse {
     let thermostat = shared_data.get_thermostat_value();
     tracing::debug!("Thermostat value: {}", thermostat);

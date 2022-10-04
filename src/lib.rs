@@ -13,20 +13,15 @@ use crate::routes::thermostat::{get_thermostat, set_thermostat};
 use crate::shared_data::AccessSharedData;
 
 use actix_web::dev::Server;
-//use actix_web::middleware::Logger;
 use actix_web::web;
 use actix_web::App;
 use actix_web::HttpServer;
 use std::net::TcpListener;
 use tracing_actix_web::TracingLogger;
 
-#[derive(serde::Deserialize, serde::Serialize)]
-struct ThermostatData {
-    thermostat_setting: usize,
-}
-
+// This function sets up the Actix web endpoints, gets each handler access to the shared data struct, and runs the server
+// process.
 pub fn run(listener: TcpListener, sd: &AccessSharedData) -> Result<Server, std::io::Error> {
-    //let common_data = web::Data::new(Arc::clone(&sd.sd));
     let common_data = web::Data::new(sd.clone());
 
     let server = HttpServer::new(move || {

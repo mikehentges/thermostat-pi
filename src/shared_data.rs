@@ -1,19 +1,24 @@
 use std::sync::{Arc, Mutex};
 use time::OffsetDateTime;
 
+// A struct to hold the values that will be shared across all threads in the application
 pub struct SharedData {
-    pub continue_read_temp: bool,
+    pub continue_background_tasks: bool,
     pub current_temp: f32,
     pub thermostat_value: usize,
     pub thermostat_on: bool,
     pub thermostat_change_datetime: OffsetDateTime,
 }
+
 pub type Sd = Arc<Mutex<SharedData>>;
 
+// The struct that will be used to manage access to the shared data struct.
 pub struct AccessSharedData {
     pub sd: Sd,
 }
 
+// Clone here just makes a copy of the Arc pointer - not  the entire class of data
+// All clones point to the same internal data
 impl Clone for AccessSharedData {
     fn clone(&self) -> Self {
         AccessSharedData {
@@ -22,14 +27,16 @@ impl Clone for AccessSharedData {
     }
 }
 
+// Getters/Setters for access to the shared data. Everything is wrapped in a MutexGuard to
+// ensure thread safety for every access point.
 impl AccessSharedData {
-    pub fn get_continue_read_temp(&self) -> bool {
+    pub fn get_continue_background_tasks(&self) -> bool {
         let lock = self.sd.lock().unwrap();
-        lock.continue_read_temp
+        lock.continue_background_tasks
     }
-    pub fn set_continue_read_temp(&self, new_val: bool) {
+    pub fn set_continue_background_tasks(&self, new_val: bool) {
         let mut lock = self.sd.lock().unwrap();
-        lock.continue_read_temp = new_val;
+        lock.continue_background_tasks = new_val;
     }
     pub fn get_current_temp(&self) -> f32 {
         let lock = self.sd.lock().unwrap();

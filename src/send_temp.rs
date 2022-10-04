@@ -34,8 +34,16 @@ pub async fn store_temp_data(sd: &AccessSharedData, aws_url: &str) -> Result<(),
         .post(&format!("{}/push_temp", aws_url))
         .json(&body)
         .send()
-        .await?;
-    tracing::debug!("response: {:?}", response);
+        .await;
+
+    match response {
+        Ok(r) => {
+            tracing::debug!("response: {:?}", r);
+        }
+        Err(e) => {
+            tracing::error!("Error sending to /push_temp, {}", e);
+        }
+    }
 
     Ok(())
 }

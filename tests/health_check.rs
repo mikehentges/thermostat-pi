@@ -28,7 +28,7 @@ fn spawn_app() -> String {
     init_subscriber(subscriber);
 
     let common_data = SharedData {
-        continue_read_temp: true,
+        continue_background_tasks: true,
         current_temp: 0.0,
         thermostat_value: 55,
         thermostat_on: false,

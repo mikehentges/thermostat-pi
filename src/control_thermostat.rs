@@ -6,6 +6,11 @@ use time::OffsetDateTime;
 // 2 minutes - minimum time before the thermostat can change state
 const TIME_BUFFER: i64 = 120;
 
+#[derive(serde::Deserialize, serde::Serialize)]
+struct ThermostatData {
+    thermostat_setting: usize,
+}
+
 #[tracing::instrument(name = "seeing if the thermostat has to be set", skip(sd))]
 fn control_thermostat(sd: &AccessSharedData) -> Result<(), Box<dyn Error>> {
     let temp_now = sd.get_current_temp();
@@ -58,7 +63,7 @@ pub async fn run_control_thermostat(
     loop {
         control_thermostat(sd).unwrap();
         tokio::time::sleep(std::time::Duration::from_secs(poll_interval as u64)).await;
-        if !sd.get_continue_read_temp() {
+        if !sd.get_continue_background_tasks() {
             break;
         }
     }
