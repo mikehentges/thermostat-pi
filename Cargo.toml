@@ -41,5 +41,7 @@ tracing-opentelemetry = "0.17.2"
 url = "2.2.2"
 simple-signal = "1.1.1"
 
+temp-data = { path="temp-data" }
+
 [dev-dependencies]
 wiremock = "0.5.10"

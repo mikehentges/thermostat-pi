@@ -1,3 +1,5 @@
+extern crate temp_data;
+
 pub mod configuration;
 pub mod control_thermostat;
 pub mod pi_relay;

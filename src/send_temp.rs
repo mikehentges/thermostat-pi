@@ -1,19 +1,12 @@
 use crate::shared_data::AccessSharedData;
 use reqwest;
 use reqwest::Error;
-use serde::Deserialize;
-use serde::Serialize;
+extern crate temp_data;
+use temp_data::TempData;
 use time::format_description::well_known::Rfc3339;
 use time::macros::offset;
 use time::OffsetDateTime;
 
-#[derive(Debug, Serialize, Deserialize)]
-struct TempData {
-    pub record_date: String,
-    pub thermostat_on: String,
-    pub temperature: String,
-    pub thermostat_value: String,
-}
 #[tracing::instrument(name = "sending temp data to AWS", skip(sd), fields())]
 pub async fn store_temp_data(sd: &AccessSharedData, aws_url: &str) -> Result<(), Error> {
     let client = reqwest::Client::new();
