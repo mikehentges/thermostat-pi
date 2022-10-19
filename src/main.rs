@@ -93,8 +93,8 @@ async fn main() -> std::io::Result<()> {
     // Application is now shutting down, send out our final values
     tracing::info!(
         "Final temperature is: {}\nFinal thermostat value is: {}",
-        sd.get_current_temp(),
-        sd.get_thermostat_value()
+        sd.current_temp(),
+        sd.thermostat_value()
     );
 
     // Make sure we don't leave the output on as we leave

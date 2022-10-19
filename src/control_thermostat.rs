@@ -13,13 +13,13 @@ struct ThermostatData {
 
 #[tracing::instrument(name = "seeing if the thermostat has to be set", skip(sd))]
 fn control_thermostat(sd: &AccessSharedData) -> Result<(), Box<dyn Error>> {
-    let temp_now = sd.get_current_temp();
-    let thermostat_now = sd.get_thermostat_value();
+    let temp_now = sd.current_temp();
+    let thermostat_now = sd.thermostat_value();
 
     let now = OffsetDateTime::now_utc();
     tracing::debug!("now: {:?}", now);
 
-    if now - sd.get_thermostat_change_datetime() > time::Duration::seconds(TIME_BUFFER) {
+    if now - sd.thermostat_change_datetime() > time::Duration::seconds(TIME_BUFFER) {
         if temp_now > thermostat_now as f32 && sd.is_thermostat_on() {
             tracing::debug!(
                 "turning thermostat off: temp_now: {}, thermostat_now: {}, thermostat_on: {}",
@@ -63,7 +63,7 @@ pub async fn run_control_thermostat(
     loop {
         control_thermostat(sd).unwrap();
         tokio::time::sleep(std::time::Duration::from_secs(poll_interval as u64)).await;
-        if !sd.get_continue_background_tasks() {
+        if !sd.continue_background_tasks() {
             break;
         }
     }

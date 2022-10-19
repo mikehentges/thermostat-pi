@@ -30,7 +30,7 @@ impl Clone for AccessSharedData {
 // Getters/Setters for access to the shared data. Everything is wrapped in a MutexGuard to
 // ensure thread safety for every access point.
 impl AccessSharedData {
-    pub fn get_continue_background_tasks(&self) -> bool {
+    pub fn continue_background_tasks(&self) -> bool {
         let lock = self.sd.lock().unwrap();
         lock.continue_background_tasks
     }
@@ -38,7 +38,7 @@ impl AccessSharedData {
         let mut lock = self.sd.lock().unwrap();
         lock.continue_background_tasks = new_val;
     }
-    pub fn get_current_temp(&self) -> f32 {
+    pub fn current_temp(&self) -> f32 {
         let lock = self.sd.lock().unwrap();
         lock.current_temp
     }
@@ -46,7 +46,7 @@ impl AccessSharedData {
         let mut lock = self.sd.lock().unwrap();
         lock.current_temp = new_val;
     }
-    pub fn get_thermostat_value(&self) -> usize {
+    pub fn thermostat_value(&self) -> usize {
         let lock = self.sd.lock().unwrap();
         lock.thermostat_value
     }
@@ -62,7 +62,7 @@ impl AccessSharedData {
         let mut lock = self.sd.lock().unwrap();
         lock.thermostat_on = new_val;
     }
-    pub fn get_thermostat_change_datetime(&self) -> OffsetDateTime {
+    pub fn thermostat_change_datetime(&self) -> OffsetDateTime {
         let lock = self.sd.lock().unwrap();
         lock.thermostat_change_datetime
     }

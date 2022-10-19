@@ -18,8 +18,8 @@ pub async fn store_temp_data(sd: &AccessSharedData, aws_url: &str) -> Result<(),
     let body = TempData {
         record_date: now,
         thermostat_on: sd.is_thermostat_on().to_string(),
-        temperature: sd.get_current_temp().to_string(),
-        thermostat_value: sd.get_thermostat_value().to_string(),
+        temperature: sd.current_temp().to_string(),
+        thermostat_value: sd.thermostat_value().to_string(),
     };
     tracing::debug!("json of struct: {:?}", serde_json::to_string(&body));
 

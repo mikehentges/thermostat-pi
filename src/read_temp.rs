@@ -54,7 +54,7 @@ pub async fn read_the_temperature(
 
         // Check to see if someone externally has told us to shut down - typically a
         // signal handler allowing us to cleanly exit.
-        if !(sd.get_continue_background_tasks()) {
+        if !(sd.continue_background_tasks()) {
             tracing::debug!("breaking loop");
             break;
         }

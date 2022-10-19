@@ -9,7 +9,7 @@ struct TemperatureData {
 }
 #[tracing::instrument(name = "getting the temperature", skip(common_data))]
 pub async fn get_temperature(common_data: web::Data<AccessSharedData>) -> HttpResponse {
-    let temperature = common_data.get_current_temp();
+    let temperature = common_data.current_temp();
     tracing::info!("retreiving temperature of: {}", temperature);
     let temperature = TemperatureData {
         temperature_value: temperature,

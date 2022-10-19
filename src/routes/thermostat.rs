@@ -24,7 +24,7 @@ pub async fn set_thermostat(
 }
 #[tracing::instrument(name = "getting the thermostat", skip(shared_data))]
 pub async fn get_thermostat(shared_data: web::Data<AccessSharedData>) -> HttpResponse {
-    let thermostat = shared_data.get_thermostat_value();
+    let thermostat = shared_data.thermostat_value();
     tracing::debug!("Thermostat value: {}", thermostat);
     let thermostat = ThermostatData {
         thermostat_setting: thermostat,
