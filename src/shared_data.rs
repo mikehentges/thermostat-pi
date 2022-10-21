@@ -3,18 +3,34 @@ use time::OffsetDateTime;
 
 // A struct to hold the values that will be shared across all threads in the application
 pub struct SharedData {
-    pub continue_background_tasks: bool,
-    pub current_temp: f32,
-    pub thermostat_value: usize,
-    pub thermostat_on: bool,
-    pub thermostat_change_datetime: OffsetDateTime,
+    continue_background_tasks: bool,
+    current_temp: f32,
+    thermostat_value: usize,
+    thermostat_on: bool,
+    thermostat_change_datetime: OffsetDateTime,
 }
 
-pub type Sd = Arc<Mutex<SharedData>>;
+impl SharedData {
+    pub fn new(
+        continue_background_tasks: bool,
+        current_temp: f32,
+        thermostat_value: usize,
+        thermostat_on: bool,
+        thermostat_change_datetime: OffsetDateTime,
+    ) -> SharedData {
+        SharedData {
+            continue_background_tasks,
+            current_temp,
+            thermostat_value,
+            thermostat_on,
+            thermostat_change_datetime,
+        }
+    }
+}
 
 // The struct that will be used to manage access to the shared data struct.
 pub struct AccessSharedData {
-    pub sd: Sd,
+    pub sd: Arc<Mutex<SharedData>>,
 }
 
 // Clone here just makes a copy of the Arc pointer - not  the entire class of data

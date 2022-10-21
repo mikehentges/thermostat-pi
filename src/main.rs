@@ -22,21 +22,22 @@ async fn main() -> std::io::Result<()> {
     let configuration = get_configuration().expect("Failed to read configuration.");
 
     // Initialize a struct that will be our "global" data, which allows safe access from every thread
-    let common_data = SharedData {
-        continue_background_tasks: true,
-        current_temp: configuration.initial_thermostat_value as f32 + 5.0,
-        thermostat_value: configuration.initial_thermostat_value,
-        thermostat_on: false,
-        thermostat_change_datetime: OffsetDateTime::UNIX_EPOCH,
-    };
+    let common_data = SharedData::new(
+        true,
+        configuration.initial_thermostat_value as f32 + 5.0,
+        configuration.initial_thermostat_value,
+        false,
+        OffsetDateTime::UNIX_EPOCH,
+    );
 
     // The wrapper around our shared data that gives it safe access across threads
     let sd = AccessSharedData {
         sd: Arc::new(Mutex::new(common_data)),
     };
 
-    // We are cloning the pointer to our shared data, and sending it into a new thread that continuously
-    // reads the temperature from our sensor, and updates the SharedData::current_temp value
+    // We are cloning the pointer to our shared data, and sending it into
+    // a new thread that continuously reads the temperature from our sensor,
+    // and updates the SharedData::current_temp value.
     let sdc = sd.clone();
     let run_handle = spawn(async move {
         tracing::debug!("kicking off read the temp");
@@ -48,7 +49,7 @@ async fn main() -> std::io::Result<()> {
         .await
         {
             Ok(_) => tracing::info!("read has ended"),
-            _ => tracing::error!("read has returned an error"),
+            Err(e) => tracing::error!("read has returned an error: {:?}", e),
         }
     });
 
@@ -60,7 +61,7 @@ async fn main() -> std::io::Result<()> {
         tracing::debug!("kicking off control_thermostat");
         match run_control_thermostat(&sdc, configuration.poll_interval).await {
             Ok(_) => tracing::info!("control_thermostat has ended"),
-            _ => tracing::error!("control_thermostat has returned an error"),
+            Err(e) => tracing::error!("control_thermostat has returned an error {:?}", e),
         }
     });
 
