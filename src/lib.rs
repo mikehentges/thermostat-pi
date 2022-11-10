@@ -9,6 +9,7 @@ pub mod send_temp;
 pub mod shared_data;
 pub mod telemetry;
 
+use crate::routes::get_thermostat_data::get_thermostat_data;
 use crate::routes::health_check::health_check;
 use crate::routes::temperature::get_temperature;
 use crate::routes::thermostat::{get_thermostat, set_thermostat};
@@ -34,6 +35,7 @@ pub fn run(listener: TcpListener, sd: &AccessSharedData) -> Result<Server, std::
             .route("/set_thermostat", web::post().to(set_thermostat))
             .route("/get_thermostat", web::get().to(get_thermostat))
             .route("/get_temperature", web::get().to(get_temperature))
+            .route("/get_thermostat_data", web::get().to(get_thermostat_data))
     })
     .listen(listener)?
     .run();
