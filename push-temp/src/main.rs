@@ -1,15 +1,12 @@
 use aws_sdk_dynamodb::model::AttributeValue;
 use aws_sdk_dynamodb::Client;
-use lambda_http::{
-    handler,
-    lambda_runtime::{self, Context, Error},
-    IntoResponse, Request,
-};
+use lambda_http::{lambda_runtime::Error, service_fn, IntoResponse, Request};
+
 extern crate temp_data;
 use temp_data::TempData;
 
 use log::{debug, error};
-use serde::{Serialize};
+use serde::Serialize;
 
 #[derive(Debug, Serialize)]
 struct SuccessResponse {
@@ -35,12 +32,12 @@ async fn main() -> Result<(), Error> {
     tracing_subscriber::fmt::init();
     debug!("logger has been set up");
 
-    lambda_runtime::run(handler(my_handler)).await?;
+    lambda_http::run(service_fn(my_handler)).await?;
 
     Ok(())
 }
 
-async fn my_handler(request: Request, _ctx: Context) -> Result<impl IntoResponse, Error> {
+async fn my_handler(request: Request) -> Result<impl IntoResponse, Error> {
     debug!("handling a request, Request is: {:?}", request);
 
     let request_json = match request.body() {
@@ -51,12 +48,13 @@ async fn my_handler(request: Request, _ctx: Context) -> Result<impl IntoResponse
     let request_struct: TempData = serde_json::from_str(request_json)?;
     debug!("the request struct is: {:?}", request_struct);
 
+    // set up as a DynamoDB client
     let config = aws_config::load_from_env().await;
     let client = Client::new(&config);
 
     // build the values that can be stored into the DB
     let record_date_av = AttributeValue::S(request_struct.record_date.clone());
-    let thermostat_on_av = AttributeValue::S(request_struct.thermostat_on.clone());
+    let thermostat_on_av = AttributeValue::S(request_struct.thermostat_on.to_string());
     let temperature_av = AttributeValue::N(request_struct.temperature.clone());
     let thermostat_value_av = AttributeValue::N(request_struct.thermostat_value.clone());
     let record_day_av: AttributeValue =

@@ -1,4 +1,4 @@
-# Input variable definitions
+# Input variable definitions, adjust for your needs
 
 variable "aws_region" {
   description = "AWS region for all resources."
