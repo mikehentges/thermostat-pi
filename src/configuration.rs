@@ -4,7 +4,7 @@ use config::Config;
 pub struct Settings {
     pub application_port: u16,
     pub push_lambda_url: String,
-    pub initial_thermostat_value: usize,
+    pub initial_thermostat_value: u16,
     pub poll_interval: usize,
 }
 #[tracing::instrument(name = "getting the configuration")]

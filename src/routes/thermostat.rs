@@ -5,7 +5,7 @@ use actix_web::HttpResponse;
 
 #[derive(serde::Deserialize, serde::Serialize)]
 pub struct ThermostatData {
-    thermostat_setting: usize,
+    thermostat_setting: u16,
 }
 #[tracing::instrument(
     name = "setting the thermostat",

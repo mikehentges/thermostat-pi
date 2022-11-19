@@ -5,7 +5,7 @@ use time::OffsetDateTime;
 pub struct SharedData {
     continue_background_tasks: bool,
     current_temp: f32,
-    thermostat_value: usize,
+    thermostat_value: u16,
     thermostat_on: bool,
     thermostat_change_datetime: OffsetDateTime,
 }
@@ -14,7 +14,7 @@ impl SharedData {
     pub fn new(
         continue_background_tasks: bool,
         current_temp: f32,
-        thermostat_value: usize,
+        thermostat_value: u16,
         thermostat_on: bool,
         thermostat_change_datetime: OffsetDateTime,
     ) -> SharedData {
@@ -62,11 +62,11 @@ impl AccessSharedData {
         let mut lock = self.sd.lock().unwrap();
         lock.current_temp = new_val;
     }
-    pub fn thermostat_value(&self) -> usize {
+    pub fn thermostat_value(&self) -> u16 {
         let lock = self.sd.lock().unwrap();
         lock.thermostat_value
     }
-    pub fn set_thermostat_value(&self, new_val: usize) {
+    pub fn set_thermostat_value(&self, new_val: u16) {
         let mut lock = self.sd.lock().unwrap();
         lock.thermostat_value = new_val;
     }

@@ -1,6 +1,6 @@
 # PUSH TEMP
-# Here we grab the compiled executable, and use the archive_file package
-# to convert it into a .zip file we need
+# Here we grab the compiled executable and use the archive_file package
+# to convert it into the .zip file we need
 data "archive_file" "push_temp_lambda_archive" {
   type = "zip"
 
@@ -76,4 +76,9 @@ resource "aws_iam_role_policy" "write_db_policy" {
   ]
 }
 EOF
+}
+// The Lambda Function URL that allows direct access to our function
+resource "aws_lambda_function_url" "push_temp_function" {
+  function_name      = aws_lambda_function.push_temp_lambda.function_name
+  authorization_type = "NONE"
 }

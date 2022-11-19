@@ -20,13 +20,13 @@ pub async fn store_temp_data(sd: &AccessSharedData, aws_url: &str) -> Result<(),
     let body = TempData {
         record_date: now,
         thermostat_on: sd.is_thermostat_on(),
-        temperature: sd.current_temp().to_string(),
-        thermostat_value: sd.thermostat_value().to_string(),
+        temperature: sd.current_temp(),
+        thermostat_value: sd.thermostat_value(),
     };
     tracing::debug!("json of struct: {:?}", serde_json::to_string(&body));
 
     let response = client
-        .post(&format!("{}/push_temp", aws_url))
+        .post(&format!("{}", aws_url))
         .json(&body)
         .send()
         .await;
@@ -36,7 +36,7 @@ pub async fn store_temp_data(sd: &AccessSharedData, aws_url: &str) -> Result<(),
             tracing::debug!("response: {:?}", r);
         }
         Err(e) => {
-            tracing::error!("Error sending to /push_temp, {}", e);
+            tracing::error!("Error sending to {}, {}", aws_url, e);
         }
     }
 

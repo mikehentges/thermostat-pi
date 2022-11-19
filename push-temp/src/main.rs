@@ -44,23 +44,23 @@ async fn my_handler(request: Request) -> Result<impl IntoResponse, Error> {
         lambda_http::Body::Text(json_string) => json_string,
         _ => "",
     };
+
     debug!("Request JSON is : {:?}", request_json);
     let request_struct: TempData = serde_json::from_str(request_json)?;
-    debug!("the request struct is: {:?}", request_struct);
 
     // set up as a DynamoDB client
     let config = aws_config::load_from_env().await;
     let client = Client::new(&config);
 
-    // build the values that can be stored into the DB
+    // build the values that are stored in the DB
     let record_date_av = AttributeValue::S(request_struct.record_date.clone());
     let thermostat_on_av = AttributeValue::S(request_struct.thermostat_on.to_string());
-    let temperature_av = AttributeValue::N(request_struct.temperature.clone());
-    let thermostat_value_av = AttributeValue::N(request_struct.thermostat_value.clone());
+    let temperature_av = AttributeValue::N(request_struct.temperature.to_string());
+    let thermostat_value_av = AttributeValue::N(request_struct.thermostat_value.to_string());
     let record_day_av: AttributeValue =
         AttributeValue::S(request_struct.record_date[..10].to_string());
 
-    // Store our data into the DB
+    // Store our data in the DB
     let _resp = client
         .put_item()
         .table_name("Shop_Thermostat")
@@ -81,6 +81,7 @@ async fn my_handler(request: Request) -> Result<impl IntoResponse, Error> {
     debug! {
         "Successfully stored item {:?}", &request_struct
     }
+    debug! {"finishing up"}
 
     Ok("the lambda was successful".to_string())
 }

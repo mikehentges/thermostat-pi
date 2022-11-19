@@ -8,7 +8,7 @@ use actix_web::HttpResponse;
 #[derive(serde::Deserialize, serde::Serialize, Debug)]
 struct ThermostatData {
     temperature: f32,
-    thermostat_setting: usize,
+    thermostat_setting: u16,
     thermostat_on: bool,
 }
 #[tracing::instrument(name = "getting all the thermostat data", skip(common_data))]

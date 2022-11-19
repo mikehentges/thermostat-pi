@@ -5,6 +5,6 @@ use serde::Serialize;
 pub struct TempData {
     pub record_date: String,
     pub thermostat_on: bool,
-    pub temperature: String,
-    pub thermostat_value: String,
+    pub temperature: f32,
+    pub thermostat_value: u16,
 }
