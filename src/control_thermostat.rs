@@ -55,7 +55,6 @@ fn control_thermostat(sd: &AccessSharedData) -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-#[tracing::instrument(name = "running the loop to monitor thermostat setting", skip(sd))]
 pub async fn run_control_thermostat(
     sd: &AccessSharedData,
     poll_interval: usize,

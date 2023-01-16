@@ -26,10 +26,6 @@ const BASE_DIR: &str = "/sys/bus/w1/devices/";
 // This function is spawned on it's own thread by main. It finds the data file for our sensor,
 // then sits in a loop reading that file, sleeping, reading again ==> until "get_continue_read_loop"
 // gets set to false outside of our loop.
-#[tracing::instrument(name = "running the loop to read temp setting",
-    skip(sd),
-    fields(temp_span = %Uuid::new_v4())
-)]
 pub async fn read_the_temperature(
     sd: &AccessSharedData,
     aws_url: String,
@@ -49,8 +45,9 @@ pub async fn read_the_temperature(
     // Now we loop "forever", reading the temperature, storing it, and sleeping
     loop {
         // if either of these fail, we return the error - which shuts down the program
-        read_temp(&device_file, sd).await?;
-        store_temp_data(sd, &aws_url).await?;
+        // read_temp(&device_file, sd).await?;
+        // store_temp_data(sd, &aws_url).await?;
+        do_work(&device_file, sd, &aws_url).await?;
 
         // Check to see if someone externally has told us to shut down - typically a
         // signal handler allowing us to cleanly exit.
@@ -65,9 +62,24 @@ pub async fn read_the_temperature(
     Ok(())
 }
 
+#[tracing::instrument(name = "running the temp setting",
+    skip(sd),
+    fields(temp_span = %Uuid::new_v4())
+)]
+async fn do_work(
+    device_file: &str,
+    sd: &AccessSharedData,
+    aws_url: &str,
+) -> Result<(), Box<dyn Error>> {
+    read_temp(device_file, sd).await?;
+    store_temp_data(sd, aws_url).await?;
+
+    Ok(())
+}
+
 // Here we implement the necessary protocol for interpreting the temperature probe's
 // text file.
-#[tracing::instrument(name = "reading the temp", skip(sd))]
+#[tracing::instrument(name = "reading the temp setting", skip(sd))]
 async fn read_temp(device_file: &str, sd: &AccessSharedData) -> Result<(), std::io::Error> {
     let mut data = lines_from_file(device_file).await;
     tracing::debug!("Data read: {:?}", data);

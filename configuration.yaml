@@ -1,5 +1,5 @@
 application_port: 8000
 push_lambda_url_aws: "https://xcww7vdjeumnnz65sr4dwpl3by0ofrwp.lambda-url.us-east-2.on.aws/"
-push_lambda_url_aws: "http://docker.mhentgeslab.work:8001/store_temperature"
+push_lambda_url: "http://docker.mhentgeslab.work:8001/store_temperature"
 initial_thermostat_value: 55
 poll_interval: 15
