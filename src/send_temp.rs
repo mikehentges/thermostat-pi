@@ -25,11 +25,7 @@ pub async fn store_temp_data(sd: &AccessSharedData, aws_url: &str) -> Result<(),
     };
     tracing::debug!("json of struct: {:?}", serde_json::to_string(&body));
 
-    let response = client
-        .post(&format!("{}", aws_url))
-        .json(&body)
-        .send()
-        .await;
+    let response = client.post(aws_url.to_string()).json(&body).send().await;
 
     match response {
         Ok(r) => {
